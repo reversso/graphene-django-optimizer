@@ -137,10 +137,14 @@ class QueryOptimizer(object):
                             continue
 
                         graphene_type = possible_type.graphene_type
-                        # Check if graphene type is a relay connection or a relay edge
-                        if hasattr(graphene_type._meta, 'node') or (
-                            hasattr(graphene_type, 'cursor')
-                            and hasattr(graphene_type, 'node')
+                        # Check if graphene type is a relay connection, a relay mutation or a relay edge
+                        if (
+                            hasattr(graphene_type._meta, "node")
+                            or hasattr(graphene_type, "mutate_and_get_payload")
+                            or (
+                                hasattr(graphene_type, "cursor")
+                                and hasattr(graphene_type, "node")
+                            )
                         ):
                             relay_store = self._optimize_gql_selections(
                                 self._get_type(selection_field_def),
